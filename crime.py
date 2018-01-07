@@ -10,41 +10,42 @@ warnings.filterwarnings('ignore')
 train = pd.read_csv('./train.csv')
 test  = pd.read_csv('./test.csv')
 
-# print train.sample(5)
 print train.describe( include='all' )
+print test.describe( include='all' )
 
-def checkNull() :
-	print pd.isnull(train).sum()
-	print pd.isnull(test).sum()
-
-checkNull()
+# def checkNull() :
+# 	print pd.isnull(train).sum()
+# 	print pd.isnull(test).sum()
+ 
+train = train.dropna()
 test = test.dropna()
-checkNull()
+# checkNull()
 
+
+# data mapping
 thief_mapping = {'Home':1, 'Bike':2, 'Car':3}
 dist_mapping = {'Beitou':1, 'Daan':2, 'Datong':3, 'Nangang':4, 'Neihu':5, 'Shilin':6, 'Songshan':7, 'Wanhua':8, 'Wenshan':9, 'Xinyi':10, 'Zhongshan':11, 'Zhongzheng':12 }
 train['Category'] = train['Category'].map( thief_mapping )
 train['District'] = train['District'].map( dist_mapping )
 test['District'] = test['District'].map( dist_mapping )
-train = train.drop('Day', 1)
-test = test.drop('Day', 1)
-print train.sample(5)
-
+train = train.drop('Day', axis=1)
+test = test.drop('Day', axis=1)
 
 def setDate () :
 	from datetime import datetime
 	baseDate = datetime.strptime( '1911/10/10', '%Y/%m/%d' )
 	for i in range( len(train['Date']) ) :
 		nowDate = datetime.strptime( train['Date'][i], '%Y/%m/%d' )
-		print (nowDate - baseDate).days, train['Date'][i]
+		# print (nowDate - baseDate).days, train['Date'][i]
 		train['Date'][i] = (nowDate - baseDate).days	
 
+print 'setting date...'
 setDate()
-# print train['Date'], type( np.array(train['Date']))
 # print train.sample(5)
 
 
-
+# classfication testing
+# selected: decision tree, random forest, KNN, SVM, LogisticRegression, GaussianNB
 def rlt () :
 	from sklearn.model_selection import train_test_split
 	from sklearn.metrics import accuracy_score

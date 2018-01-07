@@ -34,12 +34,20 @@ test = test.drop('Day', axis=1)
 def setDate () :
 	from datetime import datetime
 	baseDate = datetime.strptime( '1911/10/10', '%Y/%m/%d' )
+
+	for i in range( len(test['Date']) ) :
+		nowDate = datetime.strptime( test['Date'][i], '%Y/%m/%d' )
+		print (nowDate - baseDate).days, test['Date'][i]
+		test['Date'][i] = (nowDate - baseDate).days
+
 	for i in range( len(train['Date']) ) :
 		nowDate = datetime.strptime( train['Date'][i], '%Y/%m/%d' )
 		# print (nowDate - baseDate).days, train['Date'][i]
-		train['Date'][i] = (nowDate - baseDate).days	
+		train['Date'][i] = (nowDate - baseDate).days
 
-print 'setting date...'
+		
+
+print '\nsetting date...'
 setDate()
 # print train.sample(5)
 
@@ -101,6 +109,15 @@ def rlt () :
 	y_pred = gaussian.predict(x_val)
 	acc_gaussian = round(accuracy_score(y_pred, y_val) * 100, 2)
 	print 'GaussianNB', acc_gaussian
+
+
+	ids = test['Id']
+	predictions = randomforest.predict(test.drop('Id', axis=1))
+
+	#set the output as a dataframe and convert to csv file named submission.csv
+	output = pd.DataFrame({ 'Id' : ids, 'Category': predictions })
+	print output
+	output.to_csv('output.csv', index=False)
 
 rlt()
 

@@ -22,26 +22,30 @@ def main() :
 	# print( np.array(distCount_accom['District']), type( distCount_accom['District'] ) )
 	assert len( distCount_accom ) == len( distCount_car ) == len( distCount_cycle )
 	total = np.zeros( len(distCount_accom) )
-	for data in [ distCount_accom, distCount_cycle, distCount_car ] :
-		total += makeCrimeMap( data )
+	lst = ['accommodation thief', 'cycle thief', 'car thief']
+	datas = [ distCount_accom, distCount_cycle, distCount_car ]
+	for i in range( len( datas )) :
+		total += makeCrimeMap( datas[i], lst[i] )
 
 	total /= total.sum( axis=0 )
 	makeTotalMap( total )
 
+	plt.show()
+
+
 
 def makeTotalMap( total ) :
 	taipei_crime_shp['total_crime_percentage'] = total
-	taipei_crime_shp.plot( cmap = 'BuGn', column = 'total_crime_percentage' )
-	plt.show()
-	pass
+	rlt = taipei_crime_shp.plot( cmap = 'BuGn', column = 'total_crime_percentage', edgecolor='black' )
+	rlt.set_title( 'Total Result' )
 
 
-def makeCrimeMap( data ) :
+def makeCrimeMap( data, title ) :
 	raw_count = np.array( data['Category_Count_In_Dist'] ); raw_count = raw_count / raw_count.sum( axis=0 )
 	taipei_crime_shp['crime_percentage'] = raw_count
 	# print( raw_count )
 	# print( taipei_crime_shp )
-	print( data )
+	# print( data )
 	print( np.array( data['Catagotry_Num'] )[0], type(data['Catagotry_Num']), "NUMMMMM" )
 
 	color = ''
@@ -49,11 +53,11 @@ def makeCrimeMap( data ) :
 		color = 'OrRd'
 	elif np.array( data['Catagotry_Num'] )[0] == 2 :
 		color = 'PuRd'
-	elif np.array( data['Catagotry_Num'] )[0] :
+	elif np.array( data['Catagotry_Num'] )[0] == 3 :
 		color = 'BuPu'
 	
-	taipei_crime_shp.plot( cmap = color, column = 'crime_percentage' )
-
+	rlt = taipei_crime_shp.plot( cmap = color, column = 'crime_percentage', edgecolor='black'  )
+	rlt.set_title( title )
 	return raw_count
 
 
